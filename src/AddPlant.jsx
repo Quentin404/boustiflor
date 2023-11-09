@@ -88,8 +88,8 @@ export function AddPlant() {
                 value={proneSpecies}
                 onChange={(e) => setProneSpecies(e.target.value)}
             />
-            { !isPending && <button>Add Plant</button>}
-            { isPending && <button disabled>Adding Plant...</button>}
+            { !isPending && <button>Ajouter</button>}
+            { isPending && <button disabled>Ajout de la plante...</button>}
         </form>
     )
 }

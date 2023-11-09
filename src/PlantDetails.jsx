@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
-import {doc, onSnapshot} from "firebase/firestore";
+import {doc, deleteDoc, onSnapshot} from "firebase/firestore";
 import {db} from "./firebase/firebase";
-import {useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 const PlantDetails = () => {
     const { id } = useParams();
     const [plant, setPlant] = useState([]);
     const [loading, setLoading] = useState(true); // Add a loading state
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onSnapshot(doc(db, "plants", id), (doc) => {
@@ -19,6 +20,10 @@ const PlantDetails = () => {
         };
     }, []);
 
+    const handleDelete = () => {
+        deleteDoc(doc(db, "plants", id));
+        navigate('/');
+    }
 
     return (
         <div>
@@ -51,6 +56,8 @@ const PlantDetails = () => {
                     </tbody>
                 </table>
             )}
+            <Link to={`/plant/edit/${id}`}>Modifier</Link>
+            <button onClick={handleDelete}>Supprimer</button>
         </div>
     );
 }

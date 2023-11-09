@@ -5,6 +5,7 @@ import {Route} from "react-router-dom";
 import {Routes} from "react-router-dom";
 import {AddPlant} from "./AddPlant";
 import PlantDetails from "./PlantDetails";
+import EditPlant from "./EditPlant";
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
                       <Route exact path="/" element={<Home/>}/>
                       <Route exact path="/add" element={<AddPlant/>}/>
                       <Route path="/plant/:id" element={<PlantDetails/>}></Route>
+                      <Route path="/plant/edit/:id" element={<EditPlant/>}></Route>
                   </Routes>
               </div>
           </div>
