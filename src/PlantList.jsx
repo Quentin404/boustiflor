@@ -28,11 +28,32 @@ const PlantList = () => {
             {loading ? (
                 <p>Loading...</p> // Display a loading message while fetching data
             ) : (
-                <ul>
-                    {plants.map((item, index) => (
-                        <li key={index}>{item.vernacularName} ({item.scientificName})</li>
-                    ))}
-                </ul>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom vernaculaire</th>
+                            <th>Nom scientifique</th>
+                            <th>Famille</th>
+                            <th>Substances toxiques</th>
+                            <th>Organes toxiques</th>
+                            <th>Symptômes</th>
+                            <th>Espèces vulnérables</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {plants.map((item, index) => (
+                            <tr key={index}>
+                                <td>{item.vernacularName}</td>
+                                <td>{item.scientificName}</td>
+                                <td>{item.family}</td>
+                                <td>{item.toxicSubstances}</td>
+                                <td>{item.toxicOrgans}</td>
+                                <td>{item.symptoms}</td>
+                                <td>{item.proneSpecies}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             )}
         </div>
     );
