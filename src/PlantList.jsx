@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {collection, onSnapshot, query} from "firebase/firestore";
 import {db} from "./firebase/firebase";
+import {Link} from "react-router-dom";
 
 const PlantList = () => {
     const [plants, setPlants] = useState([]);
@@ -11,7 +12,8 @@ const PlantList = () => {
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const updatedPlants = []; // Create a new array to hold the updated data
             querySnapshot.forEach((doc) => {
-                updatedPlants.push(doc.data());
+                const id = doc.id
+                updatedPlants.push({...doc.data(), id});
             });
             setPlants(updatedPlants);
             setLoading(false); // Data has been loaded, set loading to false
@@ -21,6 +23,8 @@ const PlantList = () => {
             unsubscribe(); // Unsubscribe when the component unmounts
         };
     }, []);
+
+    console.log(plants)
 
     return (
         <div>
@@ -42,15 +46,17 @@ const PlantList = () => {
                     </thead>
                     <tbody>
                         {plants.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.vernacularName}</td>
-                                <td>{item.scientificName}</td>
-                                <td>{item.family}</td>
-                                <td>{item.toxicSubstances}</td>
-                                <td>{item.toxicOrgans}</td>
-                                <td>{item.symptoms}</td>
-                                <td>{item.proneSpecies}</td>
-                            </tr>
+                                <tr key={index}>
+                                    <Link to={`plant/${item.id}`}>
+                                        <td>{item.vernacularName}</td>
+                                    </Link>
+                                    <td>{item.scientificName}</td>
+                                    <td>{item.family}</td>
+                                    <td>{item.toxicSubstances}</td>
+                                    <td>{item.toxicOrgans}</td>
+                                    <td>{item.symptoms}</td>
+                                    <td>{item.proneSpecies}</td>
+                                </tr>
                         ))}
                     </tbody>
                 </table>

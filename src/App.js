@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Link} from "react-router-dom";
 import {Route} from "react-router-dom";
 import {Routes} from "react-router-dom";
 import {AddPlant} from "./AddPlant";
+import PlantDetails from "./PlantDetails";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
                   <Routes>
                       <Route exact path="/" element={<Home/>}/>
                       <Route exact path="/add" element={<AddPlant/>}/>
+                      <Route path="/plant/:id" element={<PlantDetails/>}></Route>
                   </Routes>
               </div>
           </div>
