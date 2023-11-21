@@ -12,6 +12,7 @@ const EditPlant = () => {
     const [toxicOrgans, setToxicOrgans] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
+    const [loading, setLoading] = useState('');
     const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
 
