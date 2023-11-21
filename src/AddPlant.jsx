@@ -12,6 +12,7 @@ export function AddPlant() {
     const [toxicOrgans, setToxicOrgans] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
 
@@ -28,7 +29,8 @@ export function AddPlant() {
             toxicSubstances: toxicSubstances,
             toxicOrgans: toxicOrgans,
             symptoms: symptoms,
-            proneSpecies: proneSpecies
+            proneSpecies: proneSpecies,
+            imageUrl: imageUrl
         });
 
         setIsPending(false);
@@ -88,8 +90,15 @@ export function AddPlant() {
                 value={proneSpecies}
                 onChange={(e) => setProneSpecies(e.target.value)}
             />
-            { !isPending && <button>Add Plant</button>}
-            { isPending && <button disabled>Adding Plant...</button>}
+            <label>Image :</label>
+            <input
+                type="text"
+                required
+                value={imageUrl}
+                onChange={(e) => setImageUrl(e.target.value)}
+            />
+            { !isPending && <button>Ajouter</button>}
+            { isPending && <button disabled>Ajout de la plante...</button>}
         </form>
     )
 }

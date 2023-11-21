@@ -1,6 +1,24 @@
 import {initializeApp} from "firebase/app";
 import {getFirestore} from "firebase/firestore";
+<<<<<<< HEAD
 import { getAuth } from "firebase/auth";
+=======
+import {getDownloadURL, getStorage, ref} from "firebase/storage";
+
+async function getUrl(path, fileName) {
+    const storage = getStorage();
+    const storageRef = ref(storage, path+fileName);
+
+    try {
+        return await getDownloadURL(storageRef);
+        // You can use it to display the image on your website.
+    } catch (error) {
+        // Handle errors here
+        console.error(error);
+    }
+}
+
+>>>>>>> 12b35d20a7492937a544c6813c0e72271f0a8441
 
 const firebaseConfig = {
 
@@ -15,6 +33,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+<<<<<<< HEAD
 
 // Initialize Firebase Authentication and get a reference to the service
 const auth = getAuth(app);
@@ -22,3 +41,7 @@ const auth = getAuth(app);
 export { auth };
 
 export const db = getFirestore(app);
+=======
+export const db = getFirestore(app);
+export {getUrl};
+>>>>>>> 12b35d20a7492937a544c6813c0e72271f0a8441
