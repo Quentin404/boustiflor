@@ -2,9 +2,11 @@ import {useEffect, useState} from "react";
 import {collection, onSnapshot, query} from "firebase/firestore";
 import {db} from "./firebase/firebase";
 import {Link} from "react-router-dom";
+import { getUrl } from "./firebase/firebase.js"
 
 const PlantList = () => {
     const [plants, setPlants] = useState([]);
+    const [plantUrls, setPlantUrls] = useState([]);
     const [loading, setLoading] = useState(true); // Add a loading state
 
     useEffect(() => {
@@ -24,7 +26,19 @@ const PlantList = () => {
         };
     }, []);
 
-    console.log(plants)
+    useEffect(() => {
+        // Once plants data are available, get plants urls
+        const getImgUrls = async () => {
+            const imgUrls = [];
+            for (const plant of plants) {
+                const url = await getUrl('img/plants/', plant.imageUrl);
+                imgUrls.push(url);
+            }
+            setPlantUrls(imgUrls);
+        };
+
+        getImgUrls();
+    }, [plants]);
 
     return (
         <div>
@@ -42,6 +56,7 @@ const PlantList = () => {
                             <th>Organes toxiques</th>
                             <th>Symptômes</th>
                             <th>Espèces vulnérables</th>
+                            <th>Image</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -56,6 +71,7 @@ const PlantList = () => {
                                     <td>{item.toxicOrgans}</td>
                                     <td>{item.symptoms}</td>
                                     <td>{item.proneSpecies}</td>
+                                    <td><img className="plant-image" src={plantUrls[index]} alt=''/></td>
                                 </tr>
                         ))}
                     </tbody>

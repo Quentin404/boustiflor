@@ -1,5 +1,20 @@
 import {initializeApp} from "firebase/app";
 import {getFirestore} from "firebase/firestore";
+import {getDownloadURL, getStorage, ref} from "firebase/storage";
+
+async function getUrl(path, fileName) {
+    const storage = getStorage();
+    const storageRef = ref(storage, path+fileName);
+
+    try {
+        return await getDownloadURL(storageRef);
+        // You can use it to display the image on your website.
+    } catch (error) {
+        // Handle errors here
+        console.error(error);
+    }
+}
+
 
 const firebaseConfig = {
 
@@ -15,3 +30,4 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
+export {getUrl};

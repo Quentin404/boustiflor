@@ -12,6 +12,7 @@ const EditPlant = () => {
     const [toxicOrgans, setToxicOrgans] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
     const [loading, setLoading] = useState('');
     const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
@@ -31,6 +32,7 @@ const EditPlant = () => {
                 setToxicOrgans(data.toxicOrgans);
                 setSymptoms(data.symptoms);
                 setProneSpecies(data.proneSpecies);
+                setImageUrl(data.imageUrl);
             } else {
                 console.log("No such document!");
             }
@@ -54,6 +56,7 @@ const EditPlant = () => {
             toxicOrgans: toxicOrgans,
             symptoms: symptoms,
             proneSpecies: proneSpecies,
+            imageUrl: imageUrl
         }, {
             merge: true
         }).then(() => {
@@ -114,6 +117,13 @@ const EditPlant = () => {
                     required
                     value={proneSpecies}
                     onChange={(e) => setProneSpecies(e.target.value)}
+                />
+                <label>Image :</label>
+                <input
+                    type="text"
+                    required
+                    value={imageUrl}
+                    onChange={(e) => setImageUrl(e.target.value)}
                 />
                 {!isPending && <button>Valider</button>}
                 {isPending && <button disabled>Validation...</button>}

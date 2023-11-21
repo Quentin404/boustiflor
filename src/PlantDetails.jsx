@@ -41,6 +41,7 @@ const PlantDetails = () => {
                         <th>Organes toxiques</th>
                         <th>Symptômes</th>
                         <th>Espèces vulnérables</th>
+                        <th>Image</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -52,6 +53,7 @@ const PlantDetails = () => {
                             <td>{plant.toxicOrgans}</td>
                             <td>{plant.symptoms}</td>
                             <td>{plant.proneSpecies}</td>
+                            <td>{plant.imageUrl}</td>
                         </tr>
                     </tbody>
                 </table>
