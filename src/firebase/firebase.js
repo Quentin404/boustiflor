@@ -1,5 +1,6 @@
 import {initializeApp} from "firebase/app";
 import {getFirestore} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import {getDownloadURL, getStorage, ref} from "firebase/storage";
 
 async function getUrl(path, fileName) {
@@ -29,5 +30,11 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Initialize Firebase Authentication and get a reference to the service
+const auth = getAuth(app);
+
+export { auth };
+
 export const db = getFirestore(app);
 export {getUrl};
