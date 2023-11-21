@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase/firebase";
 import { useNavigate, useParams } from "react-router-dom";
+import {uploadBytes, getStorage, ref} from "firebase/storage";
+import  {snakeCase} from "lodash"
 
 const EditPlant = () => {
     const { id } = useParams();
@@ -12,6 +14,7 @@ const EditPlant = () => {
     const [toxicOrgans, setToxicOrgans] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
+    const [image, setImage] = useState(null);  // State to store the selected image file
     const [imageUrl, setImageUrl] = useState('');
     const [loading, setLoading] = useState('');
     const [isPending, setIsPending] = useState(false);
@@ -43,27 +46,60 @@ const EditPlant = () => {
         fetchData();
     }, [id]);
 
-    const handleSubmit = (e) => {
+    const handleImageChange = (e) => {
+        const selectedImage = e.target.files[0];
+        setImage(selectedImage);
+    };
+
+    const handleImageUpload = async () => {
+        if (image) {
+            // Split the original file name into base name and extension
+            const originalFileName = image.name;
+            const lastDotIndex = originalFileName.lastIndexOf('.');
+            const extension = originalFileName.slice(lastDotIndex + 1);
+
+            // Rename the base name to snake_case using lodash
+            const snakeCaseName = snakeCase(sName);
+
+            // Create the new file name by combining the snake_case base name and the original extension
+            const fileName = `${snakeCaseName}.${extension}`;
+
+            const storage = getStorage();
+            const storageRef = ref(storage, `img/plants/${fileName}`);
+
+            try {
+                await uploadBytes(storageRef, image);
+                setImageUrl(fileName);
+
+                // Call setDoc here to ensure it's executed after the image is uploaded
+                await setDoc(doc(db, "plants", id), {
+                    vernacularName: vName,
+                    scientificName: sName,
+                    family: family,
+                    toxicSubstances: toxicSubstances,
+                    toxicOrgans: toxicOrgans,
+                    symptoms: symptoms,
+                    proneSpecies: proneSpecies,
+                    imageUrl: fileName // Use the fileName here
+                }, {
+                    merge: true
+                });
+
+                console.log("Document updated");
+                setIsPending(false);
+                navigate('/plant/'+id);
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setIsPending(true);
+        // Upload the image first
+        await handleImageUpload();
 
-        setDoc(doc(db, "plants", id), {
-            vernacularName: vName,
-            scientificName: sName,
-            family: family,
-            toxicSubstances: toxicSubstances,
-            toxicOrgans: toxicOrgans,
-            symptoms: symptoms,
-            proneSpecies: proneSpecies,
-            imageUrl: imageUrl
-        }, {
-            merge: true
-        }).then(() => {
-            console.log("Document updated");
-            setIsPending(false);
-            navigate('/plant/'+id);
-        });
     }
 
     return (
@@ -120,10 +156,10 @@ const EditPlant = () => {
                 />
                 <label>Image :</label>
                 <input
-                    type="text"
+                    type="file"
+                    accept="image/*"
                     required
-                    value={imageUrl}
-                    onChange={(e) => setImageUrl(e.target.value)}
+                    onChange={handleImageChange}
                 />
                 {!isPending && <button>Valider</button>}
                 {isPending && <button disabled>Validation...</button>}

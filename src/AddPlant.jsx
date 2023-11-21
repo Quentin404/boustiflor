@@ -2,6 +2,8 @@ import {db} from "./firebase/firebase";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {addDoc, collection} from "firebase/firestore";
+import {snakeCase} from "lodash";
+import {getStorage, ref, uploadBytes} from "firebase/storage";
 
 export function AddPlant() {
 
@@ -12,30 +14,62 @@ export function AddPlant() {
     const [toxicOrgans, setToxicOrgans] = useState('');
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
+    const [image, setImage] = useState(null);  // State to store the selected image file
     const [imageUrl, setImageUrl] = useState('');
     const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleImageChange = (e) => {
+        const selectedImage = e.target.files[0];
+        setImage(selectedImage);
+    };
+
+    const handleImageUpload = async () => {
+        if (image) {
+            // Split the original file name into base name and extension
+            const originalFileName = image.name;
+            const lastDotIndex = originalFileName.lastIndexOf('.');
+            const extension = originalFileName.slice(lastDotIndex + 1);
+
+            // Rename the base name to snake_case using lodash
+            const snakeCaseName = snakeCase(sName);
+
+            // Create the new file name by combining the snake_case base name and the original extension
+            const fileName = `${snakeCaseName}.${extension}`;
+
+            const storage = getStorage();
+            const storageRef = ref(storage, `img/plants/${fileName}`);
+
+            try {
+                await uploadBytes(storageRef, image);
+                setImageUrl(fileName);
+
+                await addDoc(collection(db, "plants"), {
+                    vernacularName: vName,
+                    scientificName: sName,
+                    family: family,
+                    toxicSubstances: toxicSubstances,
+                    toxicOrgans: toxicOrgans,
+                    symptoms: symptoms,
+                    proneSpecies: proneSpecies,
+                    imageUrl: fileName // Use the fileName here
+                });
+
+                console.log("Document updated");
+                setIsPending(false);
+                navigate('/');
+            } catch (error) {
+                console.error("Error uploading image:", error);
+            }
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        setIsPending(true);
+        // Upload the image first
+        await handleImageUpload();
 
-        // Add a new document in collection "cities"
-        addDoc(collection(db, "plants"), {
-            vernacularName: vName,
-            scientificName: sName,
-            family: family,
-            toxicSubstances: toxicSubstances,
-            toxicOrgans: toxicOrgans,
-            symptoms: symptoms,
-            proneSpecies: proneSpecies,
-            imageUrl: imageUrl
-        });
-
-        setIsPending(false);
-
-        navigate('/');
     }
 
     return (
@@ -92,10 +126,10 @@ export function AddPlant() {
             />
             <label>Image :</label>
             <input
-                type="text"
+                type="file"
+                accept="image/*"
                 required
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                onChange={handleImageChange}
             />
             { !isPending && <button>Ajouter</button>}
             { isPending && <button disabled>Ajout de la plante...</button>}
