@@ -2,7 +2,6 @@ import {db} from "./firebase/firebase";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {addDoc, collection} from "firebase/firestore";
-import {snakeCase} from "lodash";
 import {getStorage, ref, uploadBytes} from "firebase/storage";
 
 export function AddPlant() {
@@ -30,8 +29,6 @@ export function AddPlant() {
             const lastDotIndex = originalFileName.lastIndexOf('.');
             const extension = originalFileName.slice(lastDotIndex + 1);
 
-            // Rename the base name to snake_case using lodash
-            const snakeCaseName = snakeCase(sName);
             const randomID = crypto.randomUUID();
 
             // Create the new file name by combining the snake_case base name and the original extension

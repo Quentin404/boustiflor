@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import {db, getUrl} from "./firebase/firebase";
 import { useNavigate, useParams } from "react-router-dom";
-import {uploadBytes, getStorage, ref} from "firebase/storage";
-import  {snakeCase} from "lodash"
+import {uploadBytes, getStorage, ref, deleteObject} from "firebase/storage";
 
 const EditPlant = () => {
     const { id } = useParams();
@@ -61,17 +60,22 @@ const EditPlant = () => {
             const lastDotIndex = originalFileName.lastIndexOf('.');
             const extension = originalFileName.slice(lastDotIndex + 1);
 
-            // Rename the base name to snake_case using lodash
-            const snakeCaseName = snakeCase(sName);
+            const randomID = crypto.randomUUID();
 
             // Create the new file name by combining the snake_case base name and the original extension
-            const fileName = `${snakeCaseName}.${extension}`;
+            const fileName = `${randomID}.${extension}`;
 
             const storage = getStorage();
-            const storageRef = ref(storage, `img/plants/${fileName}`);
+            const formerImageRef = ref(storage, 'img/plants/' + imageFilename);
+            const newImageRef = ref(storage, `img/plants/${fileName}`);
 
             try {
-                await uploadBytes(storageRef, image);
+                deleteObject(formerImageRef).then(() => {
+                    // File deleted successfully
+                }).catch((error) => {
+                    // Uh-oh, an error occurred!
+                });
+                await uploadBytes(newImageRef, image);
                 setImageFilename(fileName);
 
                 // Call setDoc here to ensure it's executed after the image is uploaded
