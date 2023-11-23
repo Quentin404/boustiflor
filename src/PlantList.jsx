@@ -31,7 +31,7 @@ const PlantList = () => {
         const getImgUrls = async () => {
             const imgUrls = [];
             for (const plant of plants) {
-                const url = await getUrl('img/plants/', plant.imageUrl);
+                const url = await getUrl('img/plants/', plant.imageFilename);
                 imgUrls.push(url);
             }
             setPlantUrls(imgUrls);

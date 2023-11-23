@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "./firebase/firebase";
+import {db, getUrl} from "./firebase/firebase";
 import { useNavigate, useParams } from "react-router-dom";
 import {uploadBytes, getStorage, ref} from "firebase/storage";
 import  {snakeCase} from "lodash"
@@ -15,6 +15,7 @@ const EditPlant = () => {
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
     const [image, setImage] = useState(null);  // State to store the selected image file
+    const [imageFilename, setImageFilename] = useState('');
     const [imageUrl, setImageUrl] = useState('');
     const [loading, setLoading] = useState('');
     const [isPending, setIsPending] = useState(false);
@@ -27,7 +28,6 @@ const EditPlant = () => {
 
             if (docSnap.exists()) {
                 const data = docSnap.data();
-                console.log("Document data:", data);
                 setVName(data.vernacularName);
                 setSName(data.scientificName);
                 setFamily(data.family);
@@ -35,7 +35,10 @@ const EditPlant = () => {
                 setToxicOrgans(data.toxicOrgans);
                 setSymptoms(data.symptoms);
                 setProneSpecies(data.proneSpecies);
-                setImageUrl(data.imageUrl);
+                setImageFilename(data.imageFilename);
+                // Get the image URL
+                const url = await getUrl("img/plants/", data.imageFilename);
+                setImageUrl(url);
             } else {
                 console.log("No such document!");
             }
@@ -69,7 +72,7 @@ const EditPlant = () => {
 
             try {
                 await uploadBytes(storageRef, image);
-                setImageUrl(fileName);
+                setImageFilename(fileName);
 
                 // Call setDoc here to ensure it's executed after the image is uploaded
                 await setDoc(doc(db, "plants", id), {
@@ -80,7 +83,7 @@ const EditPlant = () => {
                     toxicOrgans: toxicOrgans,
                     symptoms: symptoms,
                     proneSpecies: proneSpecies,
-                    imageUrl: fileName // Use the fileName here
+                    imageFilename: fileName // Use the fileName here
                 }, {
                     merge: true
                 });
@@ -155,6 +158,7 @@ const EditPlant = () => {
                     onChange={(e) => setProneSpecies(e.target.value)}
                 />
                 <label>Image :</label>
+                <img className="plant-image" src={imageUrl} alt="" />
                 <input
                     type="file"
                     accept="image/*"

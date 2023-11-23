@@ -1,35 +1,56 @@
-import {useEffect, useState} from "react";
-import {doc, deleteDoc, onSnapshot} from "firebase/firestore";
-import {db} from "./firebase/firebase";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { doc, deleteDoc, getDoc } from "firebase/firestore";
+import { db } from "./firebase/firebase";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { getUrl } from "./firebase/firebase.js"
+import {getStorage, ref, deleteObject} from "firebase/storage";
 
 const PlantDetails = () => {
     const { id } = useParams();
     const [plant, setPlant] = useState([]);
-    const [loading, setLoading] = useState(true); // Add a loading state
+    const [imageUrl, setImageUrl] = useState("");
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, "plants", id), (doc) => {
-            setPlant(doc.data())
-            setLoading(false); // Data has been loaded, set loading to false
-        });
+        const fetchData = async () => {
+            const docRef = doc(db, "plants", id);
+            const docSnap = await getDoc(docRef);
 
-        return () => {
-            unsubscribe(); // Unsubscribe when the component unmounts
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setPlant(data);
+
+                // Get the image URL
+                const url = await getUrl("img/plants/", data.imageFilename);
+                setImageUrl(url);
+
+                setLoading(false);
+            } else {
+                console.log("No such document!");
+            }
         };
-    }, []);
+
+        fetchData();
+    }, [id]);
 
     const handleDelete = () => {
         deleteDoc(doc(db, "plants", id));
-        navigate('/');
-    }
+        const storage = getStorage();
+        const imageRef = ref(storage, 'img/plants/' + plant.imageFilename);
+        deleteObject(imageRef).then(() => {
+            // File deleted successfully
+        }).catch((error) => {
+            // Uh-oh, an error occurred!
+        });
+        navigate("/");
+    };
 
     return (
         <div>
             <h1>Plants:</h1>
             {loading ? (
-                <p>Loading...</p> // Display a loading message while fetching data
+                <p>Loading...</p>
             ) : (
                 <table>
                     <thead>
@@ -45,16 +66,18 @@ const PlantDetails = () => {
                     </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>{plant.vernacularName}</td>
-                            <td>{plant.scientificName}</td>
-                            <td>{plant.family}</td>
-                            <td>{plant.toxicSubstances}</td>
-                            <td>{plant.toxicOrgans}</td>
-                            <td>{plant.symptoms}</td>
-                            <td>{plant.proneSpecies}</td>
-                            <td>{plant.imageUrl}</td>
-                        </tr>
+                    <tr>
+                        <td>{plant.vernacularName}</td>
+                        <td>{plant.scientificName}</td>
+                        <td>{plant.family}</td>
+                        <td>{plant.toxicSubstances}</td>
+                        <td>{plant.toxicOrgans}</td>
+                        <td>{plant.symptoms}</td>
+                        <td>{plant.proneSpecies}</td>
+                        <td>
+                            <img className="plant-image" src={imageUrl} alt="" />
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             )}
@@ -62,6 +85,6 @@ const PlantDetails = () => {
             <button onClick={handleDelete}>Supprimer</button>
         </div>
     );
-}
+};
 
 export default PlantDetails;

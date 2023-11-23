@@ -15,7 +15,6 @@ export function AddPlant() {
     const [symptoms, setSymptoms] = useState('');
     const [proneSpecies, setProneSpecies] = useState('');
     const [image, setImage] = useState(null);  // State to store the selected image file
-    const [imageUrl, setImageUrl] = useState('');
     const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
 
@@ -33,16 +32,16 @@ export function AddPlant() {
 
             // Rename the base name to snake_case using lodash
             const snakeCaseName = snakeCase(sName);
+            const randomID = crypto.randomUUID();
 
             // Create the new file name by combining the snake_case base name and the original extension
-            const fileName = `${snakeCaseName}.${extension}`;
+            const fileName = `${randomID}.${extension}`;
 
             const storage = getStorage();
             const storageRef = ref(storage, `img/plants/${fileName}`);
 
             try {
                 await uploadBytes(storageRef, image);
-                setImageUrl(fileName);
 
                 await addDoc(collection(db, "plants"), {
                     vernacularName: vName,
@@ -52,7 +51,7 @@ export function AddPlant() {
                     toxicOrgans: toxicOrgans,
                     symptoms: symptoms,
                     proneSpecies: proneSpecies,
-                    imageUrl: fileName // Use the fileName here
+                    imageFilename: fileName // Use the fileName here
                 });
 
                 console.log("Document updated");
