@@ -1,46 +1,34 @@
 import React from "react";
-import Home from './Home';
-import {BrowserRouter as Router, Link} from "react-router-dom";
+import Home from './pages/Home';
 import {Route} from "react-router-dom";
-import {Routes} from "react-router-dom";
-import {AddPlant} from "./AddPlant";
+import {AddPlant} from "./pages/AddPlant";
 import SignIn from "./UserAccount/SignIn";
 import Login from "./UserAccount/Login";
-import AuthDetails from "./UserAccount/AuthDetails";
-import PlantDetails from "./PlantDetails";
-import EditPlant from "./EditPlant";
+import PlantDetails from "./pages/PlantDetails";
+import EditPlant from "./pages/EditPlant";
+import '@ionic/react/css/core.css';
+import '@ionic/react/css/padding.css';
+import '@ionic/react/css/flex-utils.css'
+import {IonApp, IonRouterOutlet, setupIonicReact} from '@ionic/react';
+import { IonReactRouter } from '@ionic/react-router';
+
+setupIonicReact();
 
 function App() {
 
   return (
-      <Router>
-          <div className="App">
-              <header className="App-header">
-                  <h1>Boustiflor</h1>
-                  <span>Une filiale Toxiplants</span>
-                  <AuthDetails/>
-              </header>
-              <nav>
-                  <Link to="/">Accueil</Link>
-                  <br />
-                  <Link to="/add">Ajouter une plante</Link>
-                  <br />
-                  <Link to="/signin">S'inscrire</Link>
-                  <br />
-                  <Link to="/login">Se connecter</Link>
-              </nav>
-              <div className="content">
-                  <Routes>
-                      <Route exact path="/" element={<Home/>}/>
-                      <Route exact path="/add" element={<AddPlant/>}/>
-                      <Route exact path="/signin" element={<SignIn/>}/>
-                      <Route exact path="/login" element={<Login/>}/>
-                      <Route path="/plant/:id" element={<PlantDetails/>}></Route>
-                      <Route path="/plant/edit/:id" element={<EditPlant/>}></Route>
-                  </Routes>
-              </div>
-          </div>
-      </Router>
+      <IonApp>
+          <IonReactRouter>
+              <IonRouterOutlet>
+                  <Route path="/" exact component={Home} />
+                  <Route path="/add" exact component={AddPlant} />
+                  <Route path="/signin" exact component={SignIn} />
+                  <Route path="/login" exact component={Login} />
+                  <Route path="/plant/:id" exact component={PlantDetails} />
+                  <Route path="/plant/edit/:id" exact component={EditPlant} />
+              </IonRouterOutlet>
+          </IonReactRouter>
+      </IonApp>
   );
 }
 
