@@ -145,14 +145,19 @@ const EditPlant = () => {
         }
     };
 
+    const backToPlantDetails = () => {
+        history.push("/plant/"+id)
+    }
+
     return (
         <>
             <IonHeader>
                 <IonToolbar>
-                    <Link slot="start" to={`/plant/`+id}>
-                        <IonIcon icon={arrowBackOutline}/>
-                    </Link>
-                    <IonTitle>{vName}</IonTitle>
+
+                    <IonItem slot="start" id="add-plant" button={true} onClick={backToPlantDetails} lines="none">
+                        <IonIcon icon={arrowBackOutline} />
+                    </IonItem>
+                    <IonTitle>Modifier : {vName}</IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">

@@ -5,6 +5,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { getUrl } from "../firebase/firebase.js"
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import {
+    IonBackButton,
     IonButton, IonButtons, IonCol,
     IonContent, IonGrid,
     IonHeader,
@@ -15,7 +16,7 @@ import {
     IonTitle,
     IonToolbar
 } from "@ionic/react";
-import {arrowBackOutline} from "ionicons/icons";
+import {addOutline, arrowBackOutline} from "ionicons/icons";
 
 const PlantDetails = () => {
     const { id } = useParams();
@@ -59,15 +60,21 @@ const PlantDetails = () => {
         history.push("/");
     };
 
+    const backToHome = () => {
+        history.push("/")
+    }
+
     return (
         <>
 
 
             <IonHeader>
                 <IonToolbar>
-                    <Link button={true} slot="start" to="/">
-                        <IonIcon icon={arrowBackOutline}/>
-                    </Link>
+
+                    <IonItem slot="start" id="add-plant" button={true} onClick={backToHome} lines="none">
+                        <IonIcon icon={arrowBackOutline} />
+                    </IonItem>
+
                     <IonTitle>{plant.vernacularName}</IonTitle>
                     <IonButtons slot="secondary">
                         <IonButton id="confirm-delete" onClick={() => setIsOpen(true)} color="danger" >Supprimer</IonButton>
