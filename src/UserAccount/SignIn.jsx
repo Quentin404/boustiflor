@@ -6,23 +6,48 @@ const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState(null);
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     setIsPending(true);
+    setError(null);
+
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = password.length >= 6;
+
+    if (!isEmailValid || !isPasswordValid) {
+      if (!isEmailValid) {
+        setError('Please enter a valid email address.');
+      }
+      if (!isPasswordValid) {
+        setError('Password should be at least 6 characters long.');
+      }
+      setIsPending(false);
+      return;
+    }
 
     auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log(userCredential);
-        const user = userCredential.user;
+        //const user = userCredential.user;
         setIsPending(false);
       })
       .catch((error) => {
         console.log(error);
         const errorCode = error.code;
         const errorMessage = error.message;
+        setError("Error code: " + errorCode + ". Firebase says: " + errorMessage)
+        if (error.code === "auth/email-already-in-use") {
+          setError("An account with this email adress already exists!")
+        }
         setIsPending(false);
       })
   }
@@ -37,6 +62,7 @@ const SignIn = () => {
         <label htmlFor="password">Password</label>
         <input id="password" name="password" type="password" required placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
       </div>
+      {error && <div className="error">{error}</div>}
       <div>
         <button onClick={handleSubmit} disabled={isPending}>
           {isPending ? 'Signing in...' : 'Sign in'}
