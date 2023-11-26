@@ -1,5 +1,17 @@
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import React, { useState } from "react";
+import {
+  IonButton,
+  IonContent,
+  IonHeader,
+  IonIcon,
+  IonInput,
+  IonItem,
+  IonTitle,
+  IonToolbar
+} from "@ionic/react";
+import {arrowBackOutline} from "ionicons/icons";
+import {useHistory} from "react-router-dom";
 
 const Login = () => {
   let auth = "";
@@ -7,6 +19,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
+  const history = useHistory();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -20,6 +33,7 @@ const Login = () => {
         console.log(userCredential);
         //const user = userCredential.user;
         setIsPending(false);
+        history.push("/");
       })
       .catch((error) => {
         console.log(error);
@@ -36,23 +50,50 @@ const Login = () => {
       })
   }
 
+  const backToHome = () => {
+    history.push("/")
+  }
+
   return (
-    <form className="login">
-      <div>
-        <label htmlFor="email-address">Email Adress</label>
-        <input id="email-address" name="email" type="email" required placeholder="Email address" onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" required placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      {error && <div className="error">{error}</div>}
-      <div>
-        <button onClick={handleSubmit} disabled={isPending}>
-          {isPending ? 'Logging in...' : 'Log in'}
-        </button>
-      </div>
-    </form>
+      <>
+        <IonHeader>
+          <IonToolbar>
+
+            <IonItem slot="start" id="add-plant" button={true} onClick={backToHome} lines="none">
+              <IonIcon icon={arrowBackOutline} />
+            </IonItem>
+            <IonTitle>Connexion</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <form className="login">
+
+            <IonInput
+                required
+                type="email"
+                label="E-mail"
+                fill="outline"
+                labelPlacement="floating"
+                onIonChange={(e) => setEmail(e.target.value)}>
+            </IonInput>
+            <br/>
+            <IonInput
+                required
+                type="password"
+                label="Mot de passe"
+                fill="outline"
+                labelPlacement="floating"
+                onIonChange={(e) => setPassword(e.target.value)}>
+            </IonInput>
+
+            {error && <div className="error">{error}</div>}
+            <br/>
+            <IonButton onClick={handleSubmit} disabled={isPending}>
+              {isPending ? 'Connexion...' : 'Connexion'}
+            </IonButton>
+          </form>
+        </IonContent>
+      </>
   );
 }
  

@@ -1,5 +1,8 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
+import React, { useState } from "react";
+import {IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonTitle, IonToolbar} from "@ionic/react";
+import {arrowBackOutline} from "ionicons/icons";
+import {useHistory} from "react-router-dom";
 
 const SignIn = () => {
   let auth = "";
@@ -7,6 +10,7 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState(null);
+  const history = useHistory();
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,6 +43,7 @@ const SignIn = () => {
         console.log(userCredential);
         //const user = userCredential.user;
         setIsPending(false);
+        history.push("/");
       })
       .catch((error) => {
         console.log(error);
@@ -52,23 +57,50 @@ const SignIn = () => {
       })
   }
 
+  const backToHome = () => {
+    history.push("/")
+  }
+
   return (
-    <form className="signin">
-      <div>
-        <label htmlFor="email-address">Email Adress</label>
-        <input id="email-address" name="email" type="email" required placeholder="Email address" onChange={(e) => setEmail(e.target.value)} />
-      </div>
-      <div>
-        <label htmlFor="password">Password</label>
-        <input id="password" name="password" type="password" required placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      {error && <div className="error">{error}</div>}
-      <div>
-        <button onClick={handleSubmit} disabled={isPending}>
-          {isPending ? 'Signing in...' : 'Sign in'}
-        </button>
-      </div>
-    </form>
+      <>
+        <IonHeader>
+          <IonToolbar>
+            <IonItem slot="start" id="add-plant" button={true} onClick={backToHome} lines="none">
+              <IonIcon icon={arrowBackOutline} />
+            </IonItem>
+            <IonTitle>Inscription</IonTitle>
+          </IonToolbar>
+        </IonHeader>
+        <IonContent className="ion-padding">
+          <form className="signin">
+
+            <IonInput
+                required
+                type="email"
+                label="E-mail"
+                fill="outline"
+                labelPlacement="floating"
+                onIonChange={(e) => setEmail(e.target.value)}>
+            </IonInput>
+            <br/>
+            <IonInput
+                required
+                type="password"
+                label="Mot de passe"
+                fill="outline"
+                labelPlacement="floating"
+                onIonChange={(e) => setPassword(e.target.value)}>
+            </IonInput>
+
+            {error && <div className="error">{error}</div>}
+            <br/>
+            <IonButton onClick={handleSubmit} disabled={isPending}>
+              {isPending ? 'Inscription...' : 'Créer un compte'}
+            </IonButton>
+          </form>
+
+        </IonContent>
+      </>
   );
 }
  
