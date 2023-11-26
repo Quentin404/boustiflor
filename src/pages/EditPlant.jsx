@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db, getUrl } from "../firebase/firebase";
-import {Link, useHistory, useParams} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import { uploadBytes, getStorage, ref, deleteObject } from "firebase/storage";
 import {
     IonButton,
@@ -86,7 +86,7 @@ const EditPlant = () => {
                 deleteObject(formerImageRef).then(() => {
                     // File deleted successfully
                 }).catch((error) => {
-                    // Uh-oh, an error occurred!
+                    console.error("Deletion failed : " + error)
                 });
                 await uploadBytes(newImageRef, image);
                 setImageFilename(fileName);
@@ -161,6 +161,9 @@ const EditPlant = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent className="ion-padding">
+                {loading ? (
+                    <p>Loading...</p>
+                ) : (
                 <form onSubmit={handleSubmit}>
                     <IonGrid>
                         <IonRow>
@@ -169,6 +172,7 @@ const EditPlant = () => {
                                     <IonLabel position="stacked">Nom vernaculaire</IonLabel>
                                     <IonInput
                                         required
+                                        aria-label="Nom vernaculaire"
                                         value={vName}
                                         onIonChange={(e) => setVName(e.detail.value)}
                                     ></IonInput>
@@ -178,6 +182,7 @@ const EditPlant = () => {
                                     <IonInput
                                         type="text"
                                         required
+                                        aria-label="Nom scientifique"
                                         value={sName}
                                         onIonChange={(e) => setSName(e.detail.value)}
                                     ></IonInput>
@@ -189,6 +194,7 @@ const EditPlant = () => {
                                     <IonInput
                                         type="text"
                                         required
+                                        aria-label="Famille"
                                         value={family}
                                         onIonChange={(e) => setFamily(e.detail.value)}
                                     ></IonInput>
@@ -198,6 +204,7 @@ const EditPlant = () => {
                                     <IonInput
                                         type="text"
                                         required
+                                        aria-label="Substances toxiques"
                                         value={toxicSubstances}
                                         onIonChange={(e) => setToxicSubstances(e.detail.value)}
                                     ></IonInput>
@@ -209,6 +216,7 @@ const EditPlant = () => {
                                     <IonInput
                                         type="text"
                                         required
+                                        aria-label="Organes toxiques"
                                         value={toxicOrgans}
                                         onIonChange={(e) => setToxicOrgans(e.detail.value)}
                                     ></IonInput>
@@ -218,6 +226,7 @@ const EditPlant = () => {
                                     <IonInput
                                         type="text"
                                         required
+                                        aria-label="Espèces vulnérables"
                                         value={proneSpecies}
                                         onIonChange={(e) => setProneSpecies(e.detail.value)}
                                     ></IonInput>
@@ -231,6 +240,7 @@ const EditPlant = () => {
                                     </IonCardHeader>
                                     <IonCardContent>
                                         <input
+                                            aria-label="Image"
                                             type="file"
                                             accept="image/*"
                                             onChange={handleImageChange}
@@ -254,6 +264,7 @@ const EditPlant = () => {
                     {!isPending && <IonButton type="submit">Valider</IonButton>}
                     {isPending && <IonButton disabled>Validation...</IonButton>}
                 </form>
+                    )}
             </IonContent>
         </>
     );

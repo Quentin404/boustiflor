@@ -1,6 +1,6 @@
 import { db } from "../firebase/firebase";
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
+import {useHistory} from "react-router-dom";
 import { addDoc, collection } from "firebase/firestore";
 import { getStorage, ref, uploadBytes } from "firebase/storage";
 import {
@@ -8,9 +8,9 @@ import {
     IonInput,
     IonItem,
     IonLabel,
-    IonButton,
+    IonButton, IonToolbar, IonIcon, IonTitle, IonHeader,
 } from "@ionic/react";
-import { Header } from "../components/Header";
+import {arrowBackOutline} from "ionicons/icons";
 
 export function AddPlant() {
     const [sName, setSName] = useState("");
@@ -74,9 +74,23 @@ export function AddPlant() {
         await handleImageUpload();
     };
 
+
+    const backToHome = () => {
+        history.push("/")
+    }
+
     return (
         <>
-            <Header />
+            <IonHeader>
+                <IonToolbar>
+
+                    <IonItem slot="start" id="add-plant" button={true} onClick={backToHome} lines="none">
+                        <IonIcon icon={arrowBackOutline} />
+                    </IonItem>
+
+                    <IonTitle>Ajouter une plante</IonTitle>
+                </IonToolbar>
+            </IonHeader>
             <IonContent className="ion-padding">
                 <form onSubmit={handleSubmit}>
                     <IonItem>
@@ -150,12 +164,14 @@ export function AddPlant() {
                             onChange={handleImageChange}
                         />
                     </IonItem>
-                    {!isPending && <IonButton type="submit">Ajouter</IonButton>}
-                    {isPending && (
-                        <IonButton type="button" disabled>
-                            Ajout de la plante...
-                        </IonButton>
-                    )}
+                    <IonItem lines="none">
+                        {!isPending && <IonButton slot="end" type="submit">Ajouter</IonButton>}
+                        {isPending && (
+                            <IonButton slot="end" type="button" disabled>
+                                Ajout de la plante...
+                            </IonButton>
+                        )}
+                    </IonItem>
                 </form>
             </IonContent>
         </>
