@@ -4,7 +4,7 @@ import {
     IonToolbar
 } from "@ionic/react";
 import React from "react";
-import AuthDetails from "../UserAccount/AuthDetails";
+import AuthDetails from "./AuthDetails";
 
 export function Header() {
 
