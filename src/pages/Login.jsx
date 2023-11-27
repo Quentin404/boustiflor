@@ -8,7 +8,8 @@ import {
   IonInput,
   IonItem,
   IonTitle,
-  IonToolbar
+  IonToolbar,
+  IonLabel
 } from "@ionic/react";
 import {arrowBackOutline} from "ionicons/icons";
 import {useHistory} from "react-router-dom";
@@ -41,10 +42,10 @@ const Login = () => {
         const errorMessage = error.message;
         setError("Error code: " + errorCode + ". Firebase says: " + errorMessage)
         if (errorCode === "auth/invalid-email"){
-          setError("This email adress is not valid.")
+          setError("L'adresse e-mail est invalide.");
         }
         else if (errorCode === "auth/invalid-login-credentials") {
-          setError("The credentials you provided are incorrect");
+          setError("Les informations de connexion sont invalides.");
         } 
         setIsPending(false);
       })
@@ -86,9 +87,14 @@ const Login = () => {
                 onIonChange={(e) => setPassword(e.target.value)}>
             </IonInput>
 
-            {error && <div className="error">{error}</div>}
+            {error && 
+              <IonLabel>
+                <p>{error}</p>
+              </IonLabel>
+            }
+            
             <br/>
-            <IonButton onClick={handleSubmit} disabled={isPending}>
+            <IonButton onClick={handleSubmit} disabled={isPending || !password || !email}>
               {isPending ? 'Connexion...' : 'Connexion'}
             </IonButton>
           </form>

@@ -1,6 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
-import {IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonTitle, IonToolbar} from "@ionic/react";
+import {IonButton, IonContent, IonHeader, IonIcon, IonInput, IonItem, IonTitle, IonToolbar, IonLabel} from "@ionic/react";
 import {arrowBackOutline} from "ionicons/icons";
 import {useHistory} from "react-router-dom";
 
@@ -28,10 +28,10 @@ const SignIn = () => {
 
     if (!isEmailValid || !isPasswordValid) {
       if (!isEmailValid) {
-        setError('Please enter a valid email address.');
+        setError("L'adresse e-mail n'est pas valide.");
       }
       if (!isPasswordValid) {
-        setError('Password should be at least 6 characters long.');
+        setError('Votre mot de passe doit contenir au moins 6 caractères.');
       }
       setIsPending(false);
       return;
@@ -51,7 +51,7 @@ const SignIn = () => {
         const errorMessage = error.message;
         setError("Error code: " + errorCode + ". Firebase says: " + errorMessage)
         if (error.code === "auth/email-already-in-use") {
-          setError("An account with this email adress already exists!")
+          setError("Un compte avec cette adresse e-mail existe déjà.")
         }
         setIsPending(false);
       })
@@ -92,7 +92,12 @@ const SignIn = () => {
                 onIonChange={(e) => setPassword(e.target.value)}>
             </IonInput>
 
-            {error && <div className="error">{error}</div>}
+            {error && 
+              <IonLabel>
+                <p>{error}</p>
+              </IonLabel>
+            }
+
             <br/>
             <IonButton onClick={handleSubmit} disabled={isPending}>
               {isPending ? 'Inscription...' : 'Créer un compte'}
