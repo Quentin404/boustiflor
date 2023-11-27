@@ -5,7 +5,6 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { getUrl } from "../firebase/firebase.js"
 import { getStorage, ref, deleteObject } from "firebase/storage";
 import {
-    IonBackButton,
     IonButton, IonButtons, IonCol,
     IonContent, IonGrid,
     IonHeader,
@@ -16,7 +15,8 @@ import {
     IonTitle,
     IonToolbar
 } from "@ionic/react";
-import {addOutline, arrowBackOutline} from "ionicons/icons";
+import {arrowBackOutline} from "ionicons/icons";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const PlantDetails = () => {
     const { id } = useParams();
@@ -25,6 +25,20 @@ const PlantDetails = () => {
     const [loading, setLoading] = useState(true);
     const history = useHistory();
     const [isOpen, setIsOpen] = useState(false);
+    const [authUser, setAuthUser] = useState(null);
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+            if (user) {
+                setAuthUser(user);
+            } else {
+                setAuthUser(null);
+            }
+        });
+
+        // Clean up subscription
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,14 +90,22 @@ const PlantDetails = () => {
                     </IonItem>
 
                     <IonTitle>{plant.vernacularName}</IonTitle>
-                    <IonButtons slot="secondary">
-                        <IonButton id="confirm-delete" onClick={() => setIsOpen(true)} color="danger" >Supprimer</IonButton>
-                    </IonButtons>
-                    <IonButtons slot="primary">
-                        <Link to={`/plant/edit/${id}`}>
-                            <IonButton>Modifier</IonButton>
-                        </Link>
-                    </IonButtons>
+
+                    {authUser? (
+                        <>
+                            <IonButtons slot="secondary">
+                                <IonButton id="confirm-delete" onClick={() => setIsOpen(true)} color="danger" >Supprimer</IonButton>
+                            </IonButtons>
+                            <IonButtons slot="primary">
+                                <Link to={`/plant/edit/${id}`}>
+                                    <IonButton>Modifier</IonButton>
+                                </Link>
+                            </IonButtons>
+                        </>
+                    ):(
+                        <>
+                        </>
+                    )}
                 </IonToolbar>
             </IonHeader>
             <IonContent>
@@ -98,7 +120,7 @@ const PlantDetails = () => {
                         </IonToolbar>
                     </IonHeader>
                     <IonContent className="ion-padding">
-                        <p>{plant.vernacularName} ne pourra pas être récupérée ultéreurement.</p>
+                        <p>{plant.vernacularName} ne pourra pas être récupérée ultérieurement.</p>
                         <IonButton expand="block" onClick={handleDelete} color="danger" >Supprimer</IonButton>
                     </IonContent>
                 </IonModal>
