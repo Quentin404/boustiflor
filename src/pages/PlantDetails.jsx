@@ -133,7 +133,7 @@ const PlantDetails = () => {
                             <IonRow>
                                 <IonCol size="12" size-md="4">
                                     <IonItem>
-                                        <IonLabel>
+                                        <IonLabel className="image-container">
                                             <h3>Image</h3>
                                             <img className="plant-image" src={imageUrl} alt="" />
                                         </IonLabel>

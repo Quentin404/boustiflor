@@ -22,5 +22,8 @@ a{
   width: 100%;
 }
 
+.image-container{
+  flex: initial;
+}
 
 
