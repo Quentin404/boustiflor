@@ -145,7 +145,7 @@ const EditPlant = () => {
         }
     };
 
-    const backToPlantDetails = () => {
+    const backToPlantDetails = () => { 
         history.push("/plant/"+id)
     }
 
